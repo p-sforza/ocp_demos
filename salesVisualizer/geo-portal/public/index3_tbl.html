@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/bootstrap-2.3.2.min.css" />
+    <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/application.css" />
+
+    <script type='text/javascript' src='https://s3.amazonaws.com/dynatable-docs-assets/js/jquery-1.9.1.min.js'></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+</head>
+<body>
+  <pre id="json-records" contenteditable style="display: none">[]</pre>
+  <div id="div_table">
+    <table id="mytable" class="table table-bordered"></table>
+  </div>
+
+
+    <script>
+      var socket = io('127.0.0.1:3000');
+      var topX = 10; // Number of element to render into the table
+      var jsonRecords = [];
+      var salesRegister = {};
+      var salesRegisterArray = [];
+
+      socket.on('channelRoom', function(msg){
+        var msg  = JSON.parse(msg);
+        var countryCode  = parseInt(msg[0]["cc"]);
+        var countryColor = msg[0]["countryColor"];
+        var saleValue    = parseInt(msg[0]["value"]);
+ 
+        if (salesRegister[countryCode]){
+          var actualIncome = salesRegister[countryCode][0]["value"];
+          salesRegister[countryCode][0]["value"] = +actualIncome + +saleValue;
+        } else {
+          var actualIncome = 0;
+          salesRegister[countryCode] = msg;
+        }
+        console.log(JSON.stringify(salesRegister));
+        elaborateSalesRegisterArray();
+      });
+      
+      function elaborateSalesRegisterArray() {
+        salesRegisterArray = [];
+
+        for(var k in salesRegister) {
+          salesRegisterArray.push([salesRegister[k]][0][0]);
+          salesRegisterArray.sort(function(a, b){
+            if (parseInt(a.value) < parseInt(b.value)) {return 1;}
+            if (parseInt(a.value) > parseInt(b.value)) {return -1;}
+            return 0;
+          });          
+          //console.log(JSON.stringify(salesRegisterArray));
+        }
+        document.getElementById("json-records").innerHTML = JSON.stringify(salesRegisterArray);
+        updateTbl();
+      }
+
+    </script>
+    <script>
+      // Render the table of top countries
+      var tbl=$("<table/>").attr("id","mytable");
+      var  tblBody = "";
+      var  tblHead = "<thead><th>Rank</th><th>Country</th><th>Sales Value</th></thead>";
+      $("#div_table").append(tbl);
+      function updateTbl(){
+        tblBody = "";
+        // reduce the array to top element
+        salesRegisterArray = salesRegisterArray.slice(0, topX);
+        for(var i=0;i<salesRegisterArray.length;i++){
+          var td0="<td>" + (i + 1) +"</td>";
+          var td1="<td>"+salesRegisterArray[i]["cc"]+"</td>";
+          var td2="<td>"+salesRegisterArray[i]["countryColor"]+"</td>";
+          var td3="<td>"+salesRegisterArray[i]["value"]+" €</td>";
+          tblBody =  tblBody + "<tr>" + td0 + td1 + td3 + "</tr>";
+        }
+        tblBody = "<tbody>" + tblBody + "</tbody>"
+        document.getElementById("mytable").innerHTML = tblHead + tblBody;
+      }
+    </script>
+  </body>
+</html>
+

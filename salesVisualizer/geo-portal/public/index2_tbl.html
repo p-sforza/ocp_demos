@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dynatable.js - jQuery plugin for HTML5+JSON interactive tables and more</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <meta property="og:image" content="https://s3.amazonaws.com/dynatable-docs-assets/images/dynatable-with-name.png" />
+    <meta property="og:description" content="Dynatable is a funner, semantic, interactive table plugin using jQuery, HTML5, and JSON. And it's not just for tables." />
+
+
+
+    <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/bootstrap-2.3.2.min.css" />
+    <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/application.css" />
+    <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/project.css" />
+    <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/pygments.css" />
+    <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/dynatable-docs.css" />
+    <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/jquery.dynatable.css" />
+
+    <script type='text/javascript' src='https://s3.amazonaws.com/dynatable-docs-assets/js/jquery-1.9.1.min.js'></script>
+
+
+    <script type='text/javascript' src='https://s3.amazonaws.com/dynatable-docs-assets/js/jquery.dynatable.js'></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+
+
+
+  </head>
+  <body>
+
+
+
+
+
+<pre id="json-records" contenteditable style="display: none">
+[]
+</pre>
+
+
+
+
+<table id="my-final-table" class="table table-bordered">
+  <thead>
+    <th>cc</th>
+    <th>value</th>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+    <script>
+      var socket = io('127.0.0.1:3001');
+      var jsonRecords = [];
+      socket.on('rankArrayRoom', function(msg){
+        var jsonRecords  = JSON.parse(msg);
+        //var messageJson  = JSON.parse(msg);
+        //jsonRecords.push(messageJson[0]);
+        //var countryCode  = messageJson[0]["cc"];
+        //var countryColor = messageJson[0]["countryColor"];
+        //var saleValue    = messageJson[0]["value"];
+        document.getElementById("json-records").innerHTML = JSON.stringify(jsonRecords);
+      });
+    </script>
+    <script>
+      var dynatable;
+      var dynatableReload;
+
+      function myFunction() {
+        alert("The input value has changed");
+      }
+
+
+      (function() {
+        // Table init
+        var $records = $('#json-records'),myRecords = JSON.parse($records.text());
+        dynatable = $('#my-final-table').dynatable({
+          dataset: {
+            records: myRecords
+          }
+        }).data('dynatable');
+
+        // Events that trigger the table reload 
+        $records.bind('input click DOMCharacterDataModified', function() {
+        try {
+          var json = JSON.parse($(this).text());
+          $records.removeClass('error');
+          dynatable.settings.dataset.originalRecords = json;
+          dynatable.process();
+        } catch(e) {
+          $records.addClass('error');
+        }
+      });
+    }) ();
+
+    //alert("To go...");
+    </script>
+  </body>
+</html>
+
