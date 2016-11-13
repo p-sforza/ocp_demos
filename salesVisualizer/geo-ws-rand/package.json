@@ -1,33 +1,14 @@
 {
-  "name": "pillar-base",
-  "description": "A basic pillarjs server example. Find out more about pillarjs at http://pillarjs.github.io/",
+  "name": "serverRand",
   "version": "0.0.1",
-  "private": false,
-  "engines": {
-    "node": "0.10.x",
-    "npm": "1.2.x"
-  },
+  "description": "websocket-play! This server run emit WS messages simulating an Sales event gateway",
   "dependencies": {
-    "config-multipaas": "^0.2.2",
-    "router": "^1.1.4",
-    "send": "^0.13.2",
-    "serve-static": "^1.10.2",
-    "finalhandler": "^0.4.1",
-    "express": "^4.13.4",
-    "simple-websocket": "^2.0.0",
-    "websocket":"^1.0.23"
-  },
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "tap": "^5.7.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ryanj/pillar-base.git"
+    "express": "4.10.2",
+    "socket.io": "1.2.0"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node serverRand.js"
   },
   "license": "MIT",
-  "main": "server.js"
+  "main": "serverRand.js"
 }

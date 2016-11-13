@@ -1,0 +1,14 @@
+{
+  "name": "simplsimpleClient",
+  "version": "0.0.1",
+  "description": "websocket-play! this is a client that just open a socket.io connection to the defined server and print msgs to the console",
+  "dependencies": {
+    "socket.io": "1.2.0"
+  },
+  "scripts": {
+    "start": "node simpleClient.js"
+  },
+  "license": "MIT",
+  "main": "simpleClient.js"
+
+}

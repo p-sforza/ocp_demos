@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <style>
+    @font-face {
+    font-family: 'overpass';
+    src: url('http://overpass-30e2.kxcdn.com/overpass.css');
+    font-weight: normal;
+    font-style: normal;
+    }
+
+    #ws_cmd {
+      font-family: overpassFont;
+      margin: 20px 20px 20px 20px;
+      padding: 15px 32px;
+      border: 2px;
+      border-style: groove;
+    }
+
+    #visualizer {
+      font-family: overpassFont;
+      margin: 20px 20px 20px 20px;
+      padding: 15px 32px;
+      border: 2px;
+      border-style: groove;
+      
+    }
+    
+    #head {
+      font-family: overpassFont;
+      background-image: url(https://www.redhat.com/cms/managed-files/RH_Forum_Events_Page_Banner_2000x941_0.png);
+      color:#ffffff; 
+      border: 1px solid;
+    }
+    
+    .button {
+      font-family: overpassFont;
+      background-color: #820000;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    .hyde_button {
+      font-family: overpassFont;
+      background-color: #820000;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 8px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .input{
+      font-family: overpassFont;
+      padding: 10px 32px;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      border-radius: 10px;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+    background-color: #dddddd;
+    }
+    
+  </style>
+  
+  <title>GeoVisualizer Client</title>
+  <meta charset="UTF-8" />
+  <script type='text/javascript'>
+    // Just declare a global var to pass the color attribute from websocket handling script and the globe.js script  
+    var countryColor;
+  </script>
+
+  <script>
+    // websocket handling script
+    "use strict";
+    // Initialize everything when the window finishes loading
+    window.addEventListener("load", function(event) {
+      var status = document.getElementById("status");
+      var url = document.getElementById("url");
+      var open = document.getElementById("open");
+      var close = document.getElementById("close");
+      var send = document.getElementById("send");
+      var text = document.getElementById("text");
+      var message = document.getElementById("message");
+      var socket;
+      var connectionRequest;
+      var buildws = function(){
+    	  socket = new WebSocket(url.value, "echo-protocol");
+          socket.addEventListener("open", function(event) {
+            close.disabled = false;
+            send.disabled = false;
+            status.textContent = "Connected to the websocket server";
+          });
+
+          // Display messages received from the server
+          socket.addEventListener("message", function(event) {
+            //console.log(event);
+          	message     = JSON.parse(event.data);
+          	var messageLog  = JSON.stringify(message);
+              document.getElementById("messageLog").innerHTML = messageLog ;
+
+            var countryCode = message[0]["cc"];
+              transition(countryCode)
+              
+            countryColor = message[0]["countryColor"];
+  
+          	var saleValue   = message[0]["value"];
+              document.getElementById("sales").innerHTML = saleValue + " €";
+          });
+
+          // Display any errors that occur
+          socket.addEventListener("error", function(event) {
+            message.textContent = "Error: " + event;
+            });
+ 
+          socket.addEventListener("close", function(event) {
+            open.disabled = false;
+            close.disabled = true;
+            send.disabled = true;
+            status.textContent = "Not Connected";
+            if(connectionRequest == 1)
+                setTimeout(function(){buildws(url.value)}, 5000);
+          });
+          return socket;
+      }
+
+      status.textContent = "Not Connected";
+      //url.value = "ws://geovisualizer.app.mitzi.local:80/meetup/";
+      url.value = "ws://websocket.cloudapps.novalocal:80/ws/";
+      close.disabled = true;
+      send.disabled = true;
+
+      // Create a new connection when the Connect button is clicked
+      open.addEventListener("click", function(event) {
+    	connectionRequest = 1;
+    	open.disabled = true;
+        socket = buildws();
+      });
+
+      // Close the connection when the Disconnect button is clicked
+      close.addEventListener("click", function(event) {
+      	connectionRequest = 0;
+        close.disabled = true;
+        send.disabled = true;
+        message.textContent = "";
+        socket.close();
+      });
+
+      // Send text to the server when the Send button is clicked
+      send.addEventListener("click", function(event) {
+        socket.send(text.value);
+        text.value = "";
+      });
+    });
+  </script>
+
+  <script type="text/javascript">
+  // Unhyde element
+    function toggle_visibility(id) {
+        var e = document.getElementById(id);
+        if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+     }
+</script>
+
+</head>
+<body onload="onload();">
+  <div id="head" align="center"><p><font size="100">Welcome to the Red Hat Open Source Day 2016</font></p></div>
+  
+  <div id="body">
+    <p align="center"><font size="40">myStore real time order viewer</font></p> 
+    <p><font size="5">This demo show an application that ... </font></p> 
+
+    <input id="hide_ws_connection" type="button" value="V" class="hyde_button" onclick="toggle_visibility('ws_connection');"/> connection<br />
+    <div id="ws_connection"style="display: none;">
+      <input id="url" class="input" size="40"/>
+      <input id="open" type="button" value="Connect" class="button"/>
+      <input id="close" type="button" value="Disconnect" class="button"/><br />
+      <p>Status: <span id="status"></span><br /></p>
+    </div>
+    <div id="globeCanvas" align="center"></div>
+	<table data-role="table" id="logtable" class="ui-responsive">
+      <thead>
+        <tr>
+          <th>Country Name</th>
+          <th>Order Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="log"></td>
+          <td id="sales"></td>
+        </tr>
+      </tbody>
+	</table>
+	<script src="//d3js.org/d3.v3.min.js"></script>
+	<script src="//d3js.org/queue.v1.min.js"></script>
+	<script src="//d3js.org/topojson.v1.min.js"></script>
+	<script src="/public/mbostock/raw/4090846/globe.js"></script>
+	<script type="text/javascript">
+		var CC;
+		function onload() { 
+		  CC = document.getElementById('manualCC');
+		}
+		function kk(){
+		  //alert(manualCC.value);
+		  transition(manualCC.value);
+		}
+	  </script>
+  </div>
+
+	<input id="hide_ws_cmd" type="button" value="V" class="hyde_button" onclick="toggle_visibility('ws_cmd');"/> debug<br />
+	<div id="ws_cmd" style="display: none;">
+      <!--    Not methods implemented on server side -->
+      <input id="text"  class="input" size="40" placeholder="Send a message to the websocket Server"/>
+      <input id="send" type="button" class="button" value="Send"/>
+      <input id="manualCC" type="text" class="input" size="40" placeholder="Manual insert a CC to rotate the globe"/>
+      <input type="button" class="button" value="Send" OnClick="kk()"/>
+      <table data-role="table" id="logtable" class="ui-responsive">
+        <thead>
+          <tr>
+            <th>Server message</th>
+          </tr>
+        </thead>
+      <tbody>
+        <tr>
+          <td id="messageLog"></td>
+        </tr>
+      </tbody>
+    </div>
+</body>
+</html>

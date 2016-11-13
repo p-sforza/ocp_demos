@@ -1,0 +1,13 @@
+{
+  "name": "serverRank",
+  "version": "0.0.1",
+  "description": "websocket-play! This Server (unused at the moment) start a client that connect to the sales Event Emitter, elaborate the sales messages and broadcast the sales register to it's connected clients",
+  "dependencies": {
+    "socket.io": "1.2.0"
+  },
+  "scripts": {
+    "start": "node serverRank.js"
+  },
+  "license": "MIT",
+  "main": "serverRank.js"
+}
