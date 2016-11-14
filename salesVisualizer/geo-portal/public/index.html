@@ -174,10 +174,11 @@ tr:nth-child(even) {
 
       socket = io('127.0.0.1:3000');
       var buildws = function(){
-    	  //socket = new WebSocket(url.value, "echo-protocol");
-          socket.addEventListener("open", function(event) {
-          status.textContent = "Connected to the websocket server";
-          });
+    	  socket.on('channelRoom', function(msg){
+            socket.addEventListener("on", function(event) {
+            status.textContent = "Connected to the websocket server";
+            });
+    	  });
 
           // Display messages received from the server
           socket.addEventListener("message", function(event) {
@@ -213,7 +214,7 @@ tr:nth-child(even) {
 
       status.textContent = "Not Connected";
       //url.value = "ws://geovisualizer.app.mitzi.local:80/meetup/";
-      url.value = "ws://websocket.cloudapps.novalocal:80/ws/";
+      url.value = "ws://127.0.0.1:3000/";
       close.disabled = true;
       send.disabled = true;
 
