@@ -177,8 +177,12 @@ tr:nth-child(even) {
         socket.on('channelRoom', function (msg){
           status.textContent = "Connected to the websocket server";
           document.getElementById("messageLog").innerHTML = msg ;
-          var msg  = JSON.parse(msg);
-          
+          var msgJson  = JSON.parse(msg);
+          var countryCode = msgJson[0]["cc"];
+          transition(countryCode)
+          countryColor = msgJson[0]["countryColor"];
+          var saleValue   = msgJson[0]["value"];
+          document.getElementById("sales").innerHTML = saleValue + " €";
         });
 
           // Display messages received from the server
@@ -188,13 +192,6 @@ tr:nth-child(even) {
           	var messageLog  = JSON.stringify(message);
               document.getElementById("messageLog").innerHTML = messageLog ;
 
-            var countryCode = message[0]["cc"];
-              transition(countryCode)
-              
-            countryColor = message[0]["countryColor"];
-  
-          	var saleValue   = message[0]["value"];
-              document.getElementById("sales").innerHTML = saleValue + " €";
           });
 
           // Display any errors that occur
