@@ -174,8 +174,11 @@ tr:nth-child(even) {
 
       socket = io('127.0.0.1:3000');
       var buildws = function(){
-        socket.on('channelRoom', function (){
+        socket.on('channelRoom', function (msg){
           status.textContent = "Connected to the websocket server";
+          document.getElementById("messageLog").innerHTML = msg ;
+          var msg  = JSON.parse(msg);
+          
         });
 
           // Display messages received from the server
