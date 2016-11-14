@@ -167,13 +167,16 @@ tr:nth-child(even) {
       var socket;
       var connectionRequest;
 
+      var topX = 10; // Number of element to render into the table
+      var jsonRecords = [];
+      var salesRegister = {};
+      var salesRegisterArray = [];
+
+      socket = io('127.0.0.1:3000');
       var buildws = function(){
-    	  socket = io('127.0.0.1:3000');
     	  //socket = new WebSocket(url.value, "echo-protocol");
           socket.addEventListener("open", function(event) {
-            close.disabled = false;
-            send.disabled = false;
-            status.textContent = "Connected to the websocket server";
+          status.textContent = "Connected to the websocket server";
           });
 
           // Display messages received from the server
