@@ -176,6 +176,7 @@ tr:nth-child(even) {
       var buildws = function(){
         socket.on('channelRoom', function (msg){
           status.textContent = "Connected to the websocket server";
+          //console.log(msg);     // Display messages received from the server
           document.getElementById("messageLog").innerHTML = msg ;
           var msgJson  = JSON.parse(msg);
           var countryCode = msgJson[0]["cc"];
@@ -183,22 +184,16 @@ tr:nth-child(even) {
           countryColor = msgJson[0]["countryColor"];
           var saleValue   = msgJson[0]["value"];
           document.getElementById("sales").innerHTML = saleValue + " €";
+
+          socket.on('disconnect', function() {
+            status.textContent = "Status: Not Connected";
+          });
+          socket.on('error', function(event) {
+            status.textContent = "Error: " + event;
+          });
+          
         });
 
-          // Display messages received from the server
-          socket.addEventListener("message", function(event) {
-            //console.log(event);
-          	message     = JSON.parse(event.data);
-          	var messageLog  = JSON.stringify(message);
-              document.getElementById("messageLog").innerHTML = messageLog ;
-
-          });
-
-          // Display any errors that occur
-          socket.addEventListener("error", function(event) {
-            message.textContent = "Error: " + event;
-            });
- 
           socket.addEventListener("close", function(event) {
             open.disabled = false;
             close.disabled = true;
