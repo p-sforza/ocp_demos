@@ -147,111 +147,10 @@ tr:nth-child(even) {
 
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 
-<script type='text/javascript'>
-    // Just declare a global var to pass the color attribute from websocket handling script and the globe.js script  
-    var countryColor;
-  </script>
-
-<script>
-    // websocket handling script
-    "use strict";
-    // Initialize everything when the window finishes loading
-    window.addEventListener("load", function(event) {
-      var status = document.getElementById("status");
-      var url = document.getElementById("url");
-      var open = document.getElementById("open");
-      var close = document.getElementById("close");
-      var send = document.getElementById("send");
-      var text = document.getElementById("text");
-      var message = document.getElementById("message");
-      var socket;
-      var connectionRequest;
-
-      var topX = 10; // Number of element to render into the table
-      var jsonRecords = [];
-      var salesRegister = {};
-      var salesRegisterArray = [];
-
-      socket = io('127.0.0.1:3000');
-      var buildws = function(){
-        socket.on('channelRoom', function (msg){
-          status.textContent = "Connected to the websocket server";
-          //console.log(msg);     // Display messages received from the server
-          document.getElementById("messageLog").innerHTML = msg ;
-          var msgJson  = JSON.parse(msg);
-          var countryCode = msgJson[0]["cc"];
-          transition(countryCode)
-          countryColor = msgJson[0]["countryColor"];
-          var saleValue   = msgJson[0]["value"];
-          document.getElementById("sales").innerHTML = saleValue + " €";
-
-          socket.on('disconnect', function() {
-            status.textContent = "Status: Not Connected";
-          });
-          socket.on('error', function(event) {
-            status.textContent = "Error: " + event;
-          });
-          
-        });
-
-          socket.addEventListener("close", function(event) {
-            open.disabled = false;
-            close.disabled = true;
-            send.disabled = true;
-            status.textContent = "Not Connected";
-            if(connectionRequest == 1)
-                setTimeout(function(){buildws(url.value)}, 5000);
-          });
-          return socket;
-      }
-
-      status.textContent = "Not Connected";
-      //url.value = "ws://geovisualizer.app.mitzi.local:80/meetup/";
-      url.value = "ws://127.0.0.1:3000/";
-      close.disabled = true;
-      send.disabled = true;
-
-      // Create a new connection when the Connect button is clicked
-      open.addEventListener("click", function(event) {
-    	connectionRequest = 1;
-    	open.disabled = true;
-        socket = buildws();
-      });
-
-      // Close the connection when the Disconnect button is clicked
-      close.addEventListener("click", function(event) {
-      	connectionRequest = 0;
-        close.disabled = true;
-        send.disabled = true;
-        message.textContent = "";
-        socket.close();
-      });
-
-      // Send text to the server when the Send button is clicked
-      send.addEventListener("click", function(event) {
-        socket.send(text.value);
-        text.value = "";
-      });
-    });
-  </script>
-
-<script type="text/javascript">
-  // Unhyde element
-    function toggle_visibility(id) {
-        var e = document.getElementById(id);
-        if(e.style.display == 'block')
-          e.style.display = 'none';
-       else
-          e.style.display = 'block';
-     }
-</script>
-
 </head>
 <body onload="onload();">
 	<div id="head" align="center">
-		<p>
-			<font size="100">Latest order received on-line</font>
-		</p>
+		<p><font size="100">Latest order received on-line</font></p>
 	</div>
 
 	<div id="body">
@@ -275,6 +174,10 @@ tr:nth-child(even) {
 				</tr>
 			</tbody>
 		</table>
+
+		<pre id="json-records" contenteditable style="display: none">[]</pre>
+		<table id="mytable" class="table table-bordered"></table>
+
 		<script src="//d3js.org/d3.v3.min.js"></script>
 		<script src="//d3js.org/queue.v1.min.js"></script>
 		<script src="//d3js.org/topojson.v1.min.js"></script>
@@ -324,7 +227,156 @@ tr:nth-child(even) {
 						<td id="messageLog"></td>
 					</tr>
 				</tbody>
+				</table>>
 				</div>
 				</div>
+
+   <script type='text/javascript'>
+
+	// websocket handling script
+    "use strict";
+    // Initialize everything when the window finishes loading
+    var countryColor;
+    var salesRegisterArray = [];
+    var jsonRecords = [];
+    var salesRegister = {};
+    var topX = 10; // Number of element to render into the table
+
+    window.addEventListener("load", function(event) {
+      var status = document.getElementById("status");
+      var url = document.getElementById("url");
+      var open = document.getElementById("open");
+      var close = document.getElementById("close");
+      var send = document.getElementById("send");
+      var text = document.getElementById("text");
+      var message = document.getElementById("message");
+      var socket;
+      var connectionRequest;
+
+      open.disabled = false;
+      close.disabled = true;
+      send.disabled = true;
+
+      socket = io('127.0.0.1:3000');
+      var buildws = function(){
+        socket.on('channelRoom', function (msg){
+          open.disabled = true;
+          close.disabled = false;
+          send.disabled = false;
+
+          status.textContent = "Connected to the websocket server";
+          //console.log(msg);     // Display messages received from the server
+          document.getElementById("messageLog").innerHTML = msg ;
+          var msgJson  = JSON.parse(msg);
+          var countryCode = msgJson[0]["cc"];
+          countryColor = msgJson[0]["countryColor"];
+          var saleValue   = msgJson[0]["value"];
+          transition(countryCode);
+          document.getElementById("sales").innerHTML = saleValue + " €";
+
+          if (salesRegister[countryCode]){
+            var actualIncome = salesRegister[countryCode][0]["value"];
+            salesRegister[countryCode][0]["value"] = +actualIncome + +saleValue;
+          } else {
+            var actualIncome = 0;
+            salesRegister[countryCode] = msg;
+          }
+          //console.log(JSON.stringify(salesRegister));
+          elaborateSalesRegisterArray();
+
+          socket.on('disconnect', function() {
+            status.textContent = "Status: Not Connected";
+            open.disabled = false;
+            close.disabled = true;
+            send.disabled = true;
+          });
+          socket.on('error', function(event) {
+            status.textContent = "Error: " + event;
+          });
+        });
+        return socket;
+      }
+
+      function elaborateSalesRegisterArray() {
+          salesRegisterArray = [];
+
+          for(var k in salesRegister) {
+            salesRegisterArray.push([salesRegister[k]][0][0]);
+            salesRegisterArray.sort(function(a, b){
+              if (parseInt(a.value) < parseInt(b.value)) {return 1;}
+              if (parseInt(a.value) > parseInt(b.value)) {return -1;}
+              return 0;
+            });          
+            console.log(JSON.stringify(salesRegisterArray));
+          }
+          //document.getElementById("json-records").innerHTML = JSON.stringify(salesRegisterArray);
+          updateTbl();
+        }
+
+      status.textContent = "Not Connected";
+      //url.value = "ws://geovisualizer.app.mitzi.local:80/meetup/";
+      url.value = "ws://127.0.0.1:3000/";
+
+      // Create a new connection when the Connect button is clicked
+      open.addEventListener("click", function(event) {
+    	connectionRequest = 1;
+    	open.disabled = true;
+        close.disabled = false;
+        send.disabled = false;
+        socket = buildws();
+      });
+
+      // Close the connection when the Disconnect button is clicked
+      close.addEventListener("click", function(event) {
+      	connectionRequest = 0;
+    	open.enabled = true;
+        close.disabled = true;
+        send.disabled = true;
+        status.textContent = "Status: Disconnecting...";
+        socket.close();
+      });
+
+      // Send text to the server when the Send button is clicked
+      send.addEventListener("click", function(event) {
+      });
+    });
+
+
+  </script>
+  <script>
+      // Render the table of top countries
+      //var tbl = $('<table/>').attr("id","mytable");
+
+      
+      var  tblBody = "";
+      var  tblHead = "<thead><th>Rank</th><th>Country</th><th>Sales Value</th></thead>";
+      //$("#div_table").append(tbl);
+      function updateTbl(){
+        tblBody = "";
+        // reduce the array to top element
+        salesRegisterArray = salesRegisterArray.slice(0, topX);
+        for(var i=0;i<salesRegisterArray.length;i++){
+          var td0="<td>" + (i + 1) +"</td>";
+          var td1="<td>"+salesRegisterArray[i]["cc"]+"</td>";
+          var td2="<td>"+salesRegisterArray[i]["countryColor"]+"</td>";
+          var td3="<td>"+salesRegisterArray[i]["value"]+" €</td>";
+          tblBody =  tblBody + "<tr>" + td0 + td1 + td3 + "</tr>";
+        }
+        tblBody = "<tbody>" + tblBody + "</tbody>"
+        document.getElementById("mytable").innerHTML = tblHead + tblBody;
+      }
+    </script>
+
+
+				<script type="text/javascript">
+  // Unhyde element
+    function toggle_visibility(id) {
+        var e = document.getElementById(id);
+        if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+     }
+</script>
 </body>
 </html>
