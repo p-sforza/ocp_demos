@@ -175,7 +175,7 @@ tr:nth-child(even) {
       socket = io('127.0.0.1:3000');
       var buildws = function(){
           socket.on('channelRoom', function(msg){
-              socket.addEventListener('connection', function(event) {
+              socket.addEventListener('connect', function(event) {
                 status.textContent = "Connected to the websocket server";
               });
                     
@@ -191,7 +191,7 @@ tr:nth-child(even) {
                 var actualIncome = 0;
                 salesRegister[countryCode] = msg;
               }
-              console.log(JSON.stringify(salesRegister));
+              //console.log(JSON.stringify(salesRegister));
               elaborateSalesRegisterArray();
             });
             
