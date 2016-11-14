@@ -175,7 +175,7 @@ tr:nth-child(even) {
       socket = io('127.0.0.1:3000');
       var buildws = function(){
           socket.on('channelRoom', function(msg){
-              socket.addEventListener("on", function(event) {
+              socket.addEventListener("open", function(event) {
                 status.textContent = "Connected to the websocket server";
               });
                     
