@@ -144,9 +144,6 @@ tr:nth-child(even) {
 
 <title>GeoVisualizer Client</title>
 <meta charset="UTF-8" />
-
-<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-
 <script type='text/javascript'>
     // Just declare a global var to pass the color attribute from websocket handling script and the globe.js script  
     var countryColor;
@@ -166,10 +163,8 @@ tr:nth-child(even) {
       var message = document.getElementById("message");
       var socket;
       var connectionRequest;
-
       var buildws = function(){
-    	  socket = io('127.0.0.1:3000');
-    	  //socket = new WebSocket(url.value, "echo-protocol");
+    	  socket = new WebSocket(url.value, "echo-protocol");
           socket.addEventListener("open", function(event) {
             close.disabled = false;
             send.disabled = false;
