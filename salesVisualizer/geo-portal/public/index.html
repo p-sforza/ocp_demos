@@ -195,6 +195,7 @@ tr:nth-child(even) {
               elaborateSalesRegisterArray();
             });
           socket.on('connect', function (){
+              console.log("catch connect!");
         	  status.textContent = "Connected to the websocket server";
               });
             
