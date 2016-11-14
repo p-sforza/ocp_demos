@@ -194,6 +194,9 @@ tr:nth-child(even) {
               //console.log(JSON.stringify(salesRegister));
               elaborateSalesRegisterArray();
             });
+          socket.on('connect', function (){
+        	  status.textContent = "Connected to the websocket server";
+              });
             
             function elaborateSalesRegisterArray() {
               salesRegisterArray = [];
