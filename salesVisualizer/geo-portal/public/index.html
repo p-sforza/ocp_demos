@@ -190,6 +190,7 @@ tr:nth-child(even) {
 		function kk(){
 		  //alert(manualCC.value);
 		  transition(manualCC.value);
+		  console.log("Country is: " + countries[cc].name )
 		}
 	  </script>
 	</div>
@@ -236,6 +237,7 @@ tr:nth-child(even) {
 	// websocket handling script
     "use strict";
     // Initialize everything when the window finishes loading
+    var countryName = "";
     var countryColor;
     var salesRegisterArray = [];
     var jsonRecords = [];
@@ -265,23 +267,28 @@ tr:nth-child(even) {
           send.disabled = false;
 
           status.textContent = "Connected to the websocket server";
-          //console.log(msg);     // Display messages received from the server
+          //console.log("Incoming msg: " + msg);     // Display messages received from the server
           document.getElementById("messageLog").innerHTML = msg ;
-          var msgJson  = JSON.parse(msg);
-          var countryCode = msgJson[0]["cc"];
-          countryColor = msgJson[0]["countryColor"];
-          var saleValue   = msgJson[0]["value"];
+
+          var msgJson                   = JSON.parse(msg);
+          var countryCode               = msgJson[0]["cc"];
+              countryColor              = msgJson[0]["countryColor"];
+          var saleValue                 = msgJson[0]["value"];
+              //countryName             = countries[countryCode].name;
+              msgJson[0]["countryName"] = countries[countryCode].name;
+          //console.log("Country is: " + countries[countryCode].name )
           transition(countryCode);
+          
           document.getElementById("sales").innerHTML = saleValue + " €";
 
+          //salesRegister = JSON.parse(salesRegister);
           if (salesRegister[countryCode]){
             var actualIncome = salesRegister[countryCode][0]["value"];
             salesRegister[countryCode][0]["value"] = +actualIncome + +saleValue;
           } else {
-            var actualIncome = 0;
-            salesRegister[countryCode] = msg;
+            salesRegister[countryCode] = msgJson;
           }
-          //console.log(JSON.stringify(salesRegister));
+          //console.log("salesRegister is: " + JSON.stringify(salesRegister));
           elaborateSalesRegisterArray();
 
           socket.on('disconnect', function() {
@@ -299,15 +306,20 @@ tr:nth-child(even) {
 
       function elaborateSalesRegisterArray() {
           salesRegisterArray = [];
+          //console.log("In loop salesRegister is: " + JSON.stringify(salesRegister));
 
           for(var k in salesRegister) {
-            salesRegisterArray.push([salesRegister[k]][0][0]);
+            //console.log("salesRegister in k.0 is: " + JSON.stringify(salesRegister[k][0]));
+            salesRegisterArray.push(salesRegister[k][0]);
+            
             salesRegisterArray.sort(function(a, b){
               if (parseInt(a.value) < parseInt(b.value)) {return 1;}
               if (parseInt(a.value) > parseInt(b.value)) {return -1;}
               return 0;
             });          
-            console.log(JSON.stringify(salesRegisterArray));
+
+            //console.log("salesRegister: " + JSON.stringify(salesRegister));
+            //console.log("salesRegisterArray: " + JSON.stringify(salesRegisterArray));
           }
           //document.getElementById("json-records").innerHTML = JSON.stringify(salesRegisterArray);
           updateTbl();
@@ -357,7 +369,8 @@ tr:nth-child(even) {
         salesRegisterArray = salesRegisterArray.slice(0, topX);
         for(var i=0;i<salesRegisterArray.length;i++){
           var td0="<td>" + (i + 1) +"</td>";
-          var td1="<td>"+salesRegisterArray[i]["cc"]+"</td>";
+          var td1="<td>"+salesRegisterArray[i]["countryName"]+"</td>";
+          //var td1="<td>"+salesRegisterArray[i]["cc"]+"</td>";
           var td2="<td>"+salesRegisterArray[i]["countryColor"]+"</td>";
           var td3="<td>"+salesRegisterArray[i]["value"]+" €</td>";
           tblBody =  tblBody + "<tr>" + td0 + td1 + td3 + "</tr>";
