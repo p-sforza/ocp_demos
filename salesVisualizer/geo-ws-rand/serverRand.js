@@ -3,7 +3,7 @@
 var app  = require('express')(); // just for idex page for debug purpose
 var http = require('http').Server(app);
 var io   = require('socket.io')(http);
-var serverPort = 3000;
+var serverPort = 8080;
 
 
 //--- Http Section ---------------\\
