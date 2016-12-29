@@ -2,13 +2,13 @@
 
 var app  = require('express')(); // just for idex page for debug purpose
 var http = require('http').Server(app);
-var io   = require('socket.io')(http);
+var io   = require('socket.io')(http, { path: '/ws'});
 var serverPort = 8080;
 
 
 //--- Http Section ---------------\\
 // This provide a simple index.html to test ws connection
-app.get('/ws/', function(req, res){
+app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
