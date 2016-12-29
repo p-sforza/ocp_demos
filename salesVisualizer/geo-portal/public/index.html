@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 
+<!-- For table style -->
+
+<link rel="stylesheet" media="all"
+	href="https://s3.amazonaws.com/dynatable-docs-assets/css/bootstrap-2.3.2.min.css" />
+<link rel="stylesheet" media="all"
+	href="https://s3.amazonaws.com/dynatable-docs-assets/css/application.css" />
+ 
+
 <style>
 @font-face {
 	font-family: 'overpass';
@@ -142,7 +150,7 @@ tr:nth-child(even) {
 }
 </style>
 
-<title>GeoVisualizer Client</title>
+<title>Sales Visualizer</title>
 <meta charset="UTF-8" />
 
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -150,7 +158,9 @@ tr:nth-child(even) {
 </head>
 <body onload="onload();">
 	<div id="head" align="center">
-		<p><font size="100">Latest order received on-line</font></p>
+		<p>
+			<font size="100">Latest order received on-line</font>
+		</p>
 	</div>
 
 	<div id="body">
@@ -159,8 +169,11 @@ tr:nth-child(even) {
 			<input id="open" type="button" class="button_hyded" />
 		</div>
 
-		<div id="globeCanvas" align="center"></div>
-		<table data-role="table" id="logtable" class="ui-responsive">
+		<div id="container" style="height: 480px; font-family: overpassFont; font-size: 16px; margin: 20px 20px 20px 20px; padding: 15px 32px;">
+			<div id="globeCanvas" style="display:inline-block; width: 50%; float: left;"></div>
+			<div id="top10" style="display:inline-block; width: 30%; float: right; margin: 20px 20px 20px 20px; padding: 15px 32px;"><table id="mytable" ></table></div>
+		</div>
+		<table data-role="table" id="logtable">
 			<thead>
 				<tr>
 					<th>Country Name</th>
@@ -175,13 +188,18 @@ tr:nth-child(even) {
 			</tbody>
 		</table>
 
-		<pre id="json-records" contenteditable style="display: none">[]</pre>
-		<table id="mytable" class="table table-bordered"></table>
-
+	<script>
+		// Lets define some globals var
+		const globe_width = 480;
+		const globe_height = 480;
+		var def_ws_uri = "ws://127.0.0.1:3000/"; // Default web socket emitter URI
+	</script>
+	
 		<script src="//d3js.org/d3.v3.min.js"></script>
 		<script src="//d3js.org/queue.v1.min.js"></script>
 		<script src="//d3js.org/topojson.v1.min.js"></script>
 		<script src="/mbostock/raw/4090846/globe.js"></script>
+
 		<script type="text/javascript">
 		var CC;
 		function onload() { 
@@ -199,8 +217,10 @@ tr:nth-child(even) {
 			class="hyded_hyde_button"
 			onclick="toggle_visibility('ws_connection');" /> <br />
 		<div id="ws_connection" style="display: none;">
-			<input id="url" class="input" size="40" /> <input id="open"
-				type="button" value="Connect" class="button" /> <input id="close"
+			<input id="url" class="input" size="40" />
+			<input id="connect"
+				type="button" value="Connect" class="button" />
+			<input id="close"
 				type="button" value="Disconnect" class="button" /><br />
 			<p>
 				Status: <span id="status"></span><br />
@@ -228,11 +248,12 @@ tr:nth-child(even) {
 						<td id="messageLog"></td>
 					</tr>
 				</tbody>
-				</table>>
-				</div>
-				</div>
+			</table>
+			>
+		</div>
+	</div>
 
-   <script type='text/javascript'>
+	<script type='text/javascript'>
 
 	// websocket handling script
     "use strict";
@@ -259,7 +280,7 @@ tr:nth-child(even) {
       close.disabled = true;
       send.disabled = true;
 
-      socket = io('127.0.0.1:3000');
+      socket = io(def_ws_uri);
       var buildws = function(){
         socket.on('channelRoom', function (msg){
           open.disabled = true;
@@ -326,8 +347,7 @@ tr:nth-child(even) {
         }
 
       status.textContent = "Not Connected";
-      //url.value = "ws://geovisualizer.app.mitzi.local:80/meetup/";
-      url.value = "ws://127.0.0.1:3000/";
+      url.value = def_ws_uri;
 
       // Create a new connection when the Connect button is clicked
       open.addEventListener("click", function(event) {
@@ -355,13 +375,10 @@ tr:nth-child(even) {
 
 
   </script>
-  <script>
-      // Render the table of top countries
-      //var tbl = $('<table/>').attr("id","mytable");
-
+	<script>
       
       var  tblBody = "";
-      var  tblHead = "<thead><th>Rank</th><th>Country</th><th>Sales Value</th></thead>";
+      var  tblHead = "<thead><th>Rank</th><th>Country</th><th>Tot sales</th></thead>";
       //$("#div_table").append(tbl);
       function updateTbl(){
         tblBody = "";
@@ -381,7 +398,7 @@ tr:nth-child(even) {
     </script>
 
 
-				<script type="text/javascript">
+	<script type="text/javascript">
   // Unhyde element
     function toggle_visibility(id) {
         var e = document.getElementById(id);

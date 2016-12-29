@@ -1,5 +1,5 @@
-  var width = 480,
-      height = 480;
+  var width = globe_width,
+      height = globe_height;
 
   var projection = d3.geo.orthographic()
     .translate([width / 2, height / 2])
