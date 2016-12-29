@@ -8,7 +8,7 @@ var serverPort = 8080;
 
 //--- Http Section ---------------\\
 // This provide a simple index.html to test ws connection
-app.get('/', function(req, res){
+app.get('/ws/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
