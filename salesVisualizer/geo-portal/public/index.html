@@ -280,7 +280,7 @@ tr:nth-child(even) {
       close.disabled = true;
       send.disabled = true;
 
-      socket = io(def_ws_uri);
+      socket = io(def_ws_uri,{ path: '/ws/socket.io'});
       var buildws = function(){
         socket.on('channelRoom', function (msg){
           open.disabled = true;
