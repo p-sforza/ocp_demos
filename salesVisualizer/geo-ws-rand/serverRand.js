@@ -2,9 +2,8 @@
 
 var app  = require('express')(); // just for idex page for debug purpose
 var http = require('http').Server(app);
-//var serverPort = 8080;
-var serverPort = process.env.MY_SERVER_PORT || 8081;
-var serverContext = process.env.MY_SERVER_CONTEXT || '/ws';
+var serverPort =      process.env.MY_SERVER_PORT      || 8080;
+var serverContext =   process.env.MY_SERVER_CONTEXT   || '/ws';
 
 
 var io   = require('socket.io')(http, { path: serverContext});
