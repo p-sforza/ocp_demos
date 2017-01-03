@@ -4,16 +4,18 @@
 
 <!-- For table style -->
 
-<link rel="stylesheet" media="all"
-	href="https://s3.amazonaws.com/dynatable-docs-assets/css/bootstrap-2.3.2.min.css" />
-<link rel="stylesheet" media="all"
-	href="https://s3.amazonaws.com/dynatable-docs-assets/css/application.css" />
- 
+<!-- <link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/bootstrap-2.3.2.min.css" /> -->
+
+<!-- Stile for table 
+<link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/application.css" />
+-->
+<link rel="stylesheet" media="all" href="application.css" />
 
 <style>
 @font-face {
 	font-family: 'overpass';
-	src: url('http://overpass-30e2.kxcdn.com/overpass.css');
+	/*src: url('http://overpass-30e2.kxcdn.com/overpass.css');*/
+	src: url(overpass.css);
 	font-weight: normal;
 	font-style: normal;
 }
@@ -44,14 +46,14 @@
 
 #head {
 	font-family: overpassFont;
-	background-image:
-		url(https://www.redhat.com/cms/managed-files/RH_Forum_Events_Page_Banner_2000x941_0.png);
+	/* background-image: url(https://www.redhat.com/cms/managed-files/RH_Forum_Events_Page_Banner_2000x941_0.png); */
+	background-image: url(rh_banner.png);
 	color: #ffffff;
 	border: 1px solid;
 }
 
 .button_hyded {
-	background: url(/OpenShift2.png) no-repeat;
+	background: url(OpenShift2.png) no-repeat;
 	background-position: center;
 	background-size: cover;
 	width: 74px;
