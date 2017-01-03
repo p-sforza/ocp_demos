@@ -1,11 +1,9 @@
 // Simple ws Server that generate a "sale" event and push messages to all client into channelRoom channel
 
-var app  = require('express')(); // just for idex page for debug purpose
-var http = require('http').Server(app);
-var serverPort =      process.env.MY_SERVER_PORT      || 8080;
-
-//var serverContext =   process.env.MY_SERVER_CONTEXT   || '/ws';
-//var io   = require('socket.io')(http, { path: serverContext});
+var app          =   require('express')(); // just for idex page for debug purpose
+var http         =   require('http').Server(app);
+var serverPort   =   process.env.MY_SERVER_PORT      || 8080;
+	
 var io   = require('socket.io')(http);
 
 
@@ -39,7 +37,7 @@ io.on('connection', function(socket){
 
 function createSaleMsg() {
   var countryCode  = Math.round(Math.random() * 0x64);
-  var countryColor = "#f00"; // Country in red!
+  var countryColor = process.env.MY_COUNTRY_COLOR || "#f00"; // Country in red!
   var delay        = Math.round((Math.random() * 2) + 2)*1000;
   var saleValue    = Math.round((Math.random() * 1000) + 1);
 
