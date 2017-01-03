@@ -1,4 +1,146 @@
-/*th { background: #71af5a; color: #fff; }*/
+/* My stuff*/
+
+@font-face {
+	font-family: 'overpass';
+	/*src: url('http://overpass-30e2.kxcdn.com/overpass.css');*/
+	src: url(overpass.css);
+	font-weight: normal;
+	font-style: normal;
+}
+
+#ws_connection {
+	font-family: overpassFont;
+	margin: 20px 20px 20px 20px;
+	padding: 15px 32px;
+	border: 2px;
+	border-style: groove;
+}
+
+#ws_cmd {
+	font-family: overpassFont;
+	margin: 20px 20px 20px 20px;
+	padding: 15px 32px;
+	border: 2px;
+	border-style: groove;
+}
+
+#visualizer {
+	font-family: overpassFont;
+	margin: 20px 20px 20px 20px;
+	padding: 15px 32px;
+	border: 2px;
+	border-style: groove;
+}
+
+#head {
+	font-family: overpassFont;
+	/* background-image: url(https://www.redhat.com/cms/managed-files/RH_Forum_Events_Page_Banner_2000x941_0.png); */
+	background-image: url(rh_banner.png);
+	color: #ffffff;
+	border: 1px solid;
+}
+
+.button_hyded {
+	background: url(OpenShift2.png) no-repeat;
+	background-position: center;
+	background-size: cover;
+	width: 74px;
+	height: 74px;
+	border-radius: 60px;
+	font-family: overpassFont;
+	background-color: #ffffff;
+	border: none;
+	color: black;
+	display: inline-block;
+	cursor: pointer;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+}
+
+.button_hyded:hover {
+	background: url(/g12059.png) no-repeat;
+	background-position: center;
+	background-size: cover;
+	width: 85px;
+	height: 85px;
+	border-radius: 80px;
+}
+
+.button {
+	font-family: overpassFont;
+	background-color: #820000;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+	border-radius: 10px;
+}
+
+.hyde_button {
+	font-family: overpassFont;
+	background-color: #820000;
+	border: none;
+	color: white;
+	padding: 5px 10px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 8px;
+	margin: 4px 2px;
+	cursor: pointer;
+	border-radius: 4px;
+}
+
+.hyded_hyde_button {
+	width: 60px;
+	height: 20px;
+	font-family: overpassFont;
+	/*This is a red or hyded button*/
+	/*background-color: #820000;*/
+	background-color: #ffffff;
+	border: none;
+	color: white;
+	padding: 3px 6px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 8px;
+	margin: 4px 2px;
+	cursor: pointer;
+	border-radius: 4px;
+}
+
+.input {
+	font-family: overpassFont;
+	padding: 10px 32px;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	border-radius: 10px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td, th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+
+
+/* To be cleaned*/
 th { background: #820000; color: #fff; }
 br.clear { width: 100%; height: 0; clear: both; }
 
