@@ -19,6 +19,7 @@ app.get('/', function(req, res){
 
 http.listen(serverPort, function(){
   console.log((new Date()) + ' [http.listen] listening on:' + serverPort);
+  console.log((new Date()) + ' [io] listening at:' + serverContext);
 });
 
 //--------------------------------\\
